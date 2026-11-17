@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CS Classroom Coding Lab — Conditionals &amp; For Loops</title>
+  <style>
+    :root {
+      /* Crisp White Theme (Default) */
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --sub-panel: #f1f5f9;
+      --editor-bg: #ffffff;
+      --editor-text: #0f172a;
+      --caret-color: #0f172a;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #2563eb;
+      --code-bg: #e2e8f0;
+      --code-text: #1d4ed8;
+      --note-bg: #eff6ff;
+      --note-border: #bfdbfe;
+      --note-text: #1e40af;
+      --pass: #059669;
+      --pass-bg: #d1fae5;
+      --pass-text: #065f46;
+      --fail: #dc2626;
+      --fail-bg: #fee2e2;
+      --fail-text: #991b1b;
+      --pending-bg: #e2e8f0;
+      --pending-text: #475569;
+      --shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+
+      /* Syntax Highlight Colors (Light / White Editor) */
+      --syn-keyword: #7c3aed;
+      --syn-builtin: #0284c7;
+      --syn-number: #d97706;
+      --syn-string: #059669;
+      --syn-comment: #64748b;
+      --syn-operator: #db2777;
+    }
+
+    body.dark-theme {
+      /* Dark Theme */
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --sub-panel: #0f172a;
+      --editor-bg: #090d16;
+      --editor-text: #e2e8f0;
+      --caret-color: #f8fafc;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #3b82f6;
+      --code-bg: #1e293b;
+      --code-text: #93c5fd;
+      --note-bg: #172554;
+      --note-border: #1e40af;
+      --note-text: #93c5fd;
+      --pass: #10b981;
+      --pass-bg: #064e3b;
+      --pass-text: #6ee7b7;
+      --fail: #ef4444;
+      --fail-bg: #7f1d1d;
+      --fail-text: #fca5a5;
+      --pending-bg: #1e293b;
+      --pending-text: #94a3b8;
+      --shadow: none;
+
+      /* Syntax Highlight Colors (Dark Editor) */
+      --syn-keyword: #c084fc;
+      --syn-builtin: #38bdf8;
+      --syn-number: #fbbf24;
+      --syn-string: #34d399;
+      --syn-comment: #64748b;
+      --syn-operator: #f472b6;
+    }
+
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    body {
+      margin: 0;
+      padding: 24px;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .header {
+      max-width: 1220px;
+      margin: 0 auto 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .header h1 { margin: 0; font-size: 1.4rem; }
+    .header p { margin: 4px 0 0; color: var(--muted); font-size: 0.9rem; }
+
+    .theme-btn {
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+
+    .grid {
+      max-width: 1220px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 20px;
+    }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+    }
+
+    label.field-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: var(--sub-panel);
+      color: var(--text);
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+
+    .prompt-box {
+      background: var(--sub-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: var(--text);
+    }
+    .prompt-box code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--code-text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-weight: 600;
+    }
+
+    .logic-banner {
+      background: var(--note-bg);
+      border: 1px solid var(--note-border);
+      color: var(--note-text);
+      border-radius: 8px;
+      padding: 9px 12px;
+      margin-bottom: 14px;
+      font-size: 0.84rem;
+      line-height: 1.45;
+      font-weight: 500;
+    }
+
+    /* Syntax-Highlighted Editor Stack */
+    .editor-wrapper {
+      position: relative;
+      width: 100%;
+      height: 340px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--editor-bg);
+      overflow: hidden;
+    }
+    .editor-wrapper:focus-within {
+      outline: 2px solid var(--accent);
+      border-color: transparent;
+    }
+
+    pre#highlightLayer,
+    textarea#codeEditor {
+      position: absolute;
+      inset: 0;
+      margin: 0;
+      padding: 14px;
+      width: 100%;
+      height: 100%;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.95rem;
+      line-height: 1.55;
+      letter-spacing: normal;
+      tab-size: 2;
+      white-space: pre;
+      overflow: auto;
+      border: none;
+    }
+
+    pre#highlightLayer {
+      z-index: 1;
+      pointer-events: none;
+      color: var(--editor-text);
+    }
+
+    textarea#codeEditor {
+      z-index: 2;
+      background: transparent;
+      color: transparent;
+      caret-color: var(--caret-color);
+      resize: none;
+      outline: none;
+    }
+    textarea#codeEditor::selection {
+      background: rgba(37, 99, 235, 0.22);
+    }
+
+    /* Syntax Token Classes */
+    .tok-kw { color: var(--syn-keyword); font-weight: 600; }
+    .tok-bi { color: var(--syn-builtin); font-weight: 600; }
+    .tok-num { color: var(--syn-number); font-weight: 600; }
+    .tok-str { color: var(--syn-string); }
+    .tok-com { color: var(--syn-comment); font-style: italic; }
+    .tok-op { color: var(--syn-operator); font-weight: 600; }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    button.action-btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.15s ease;
+    }
+    button.action-btn:hover { opacity: 0.9; }
+    .btn-run { background: var(--pass); color: #ffffff; }
+    .btn-reset { background: var(--sub-panel); color: var(--text); border: 1px solid var(--border) !important; font-weight: 600; }
+
+    .score-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .score-header h2 { margin: 0; font-size: 1.05rem; }
+    .score-pill {
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      background: var(--sub-panel);
+      border: 1px solid var(--border);
+    }
+
+    .results-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 520px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .test-card {
+      background: var(--sub-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.86rem;
+    }
+    .test-card.pending { border-left: 4px solid #94a3b8; }
+    .test-card.pass { border-left: 4px solid var(--pass); }
+    .test-card.fail { border-left: 4px solid var(--fail); }
+
+    .test-title { font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .test-call {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.82rem;
+      color: var(--code-text);
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    .test-io {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .test-io span.val-expected { color: var(--pass-text); font-weight: 700; }
+    .test-io span.val-actual-pass { color: var(--pass-text); font-weight: 700; }
+    .test-io span.val-actual-fail { color: var(--fail-text); font-weight: 700; }
+
+    .status-tag {
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .pending .status-tag { background: var(--pending-bg); color: var(--pending-text); }
+    .pass .status-tag { background: var(--pass-bg); color: var(--pass-text); }
+    .fail .status-tag { background: var(--fail-bg); color: var(--fail-text); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div>
+      <h1>CS Classroom Function &amp; Loop Lab</h1>
+      <p>Master conditionals and <code>for</code> loops with instant step-by-step edge case testing.</p>
+    </div>
+    <button class="theme-btn" id="themeToggleBtn">🌙 Switch to Dark Mode</button>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <label class="field-label" for="challengeSelect">Select Problem</label>
+      <select id="challengeSelect"></select>
+
+      <div class="prompt-box" id="problemPrompt"></div>
+      <div class="logic-banner" id="logicBanner"></div>
+
+      <label class="field-label" for="codeEditor">Your Solution (JavaScript)</label>
+      <div class="editor-wrapper">
+        <pre id="highlightLayer" aria-hidden="true"></pre>
+        <textarea id="codeEditor" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+      </div>
+
+      <div class="toolbar">
+        <button class="action-btn btn-run" id="runBtn">▶ Check Solution</button>
+        <button class="action-btn btn-reset" id="resetBtn">Reset Starter Code</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="score-header">
+        <h2>Test Cases &amp; Output</h2>
+        <span class="score-pill" id="scorePill">Ready</span>
+      </div>
+      <div class="results-list" id="resultsList"></div>
+    </div>
+  </div>
+
+  <iframe id="sandboxFrame" sandbox="allow-scripts" style="display:none;"></iframe>
+
+  <script>
+    const CHALLENGES = {
+      /* === PART A: CONDITIONALS & MAX LOGIC === */
+      max2: {
+        id: "max2",
+        group: "Part 1: Conditional Logic (Max Functions)",
+        title: "1. Max of 2 Numbers — findMax2(a, b) [10 Tests]",
+        prompt: "Write a function <code>findMax2(a, b)</code> that returns the larger of two numbers. If any input is <code>NaN</code>, return <code>-1</code>.",
+        logicNote: "Note: The Math library is available for math helpers, but built-in shortcuts like Math.max are not allowed here because I am checking your own conditional logic.",
+        fnName: "findMax2",
+        forbid: [
+          { pattern: "Math\\s*\\.\\s*max", message: "Math.max is not allowed — I am checking your own conditional logic!" }
+        ],
+        starter: "function findMax2(a, b) {\n  // Return -1 if any input is NaN\n  if (Number.isNaN(a) || Number.isNaN(b)) {\n    return -1;\n  }\n  // Write your comparison logic below\n  \n}"
+      },
+      max3: {
+        id: "max3",
+        group: "Part 1: Conditional Logic (Max Functions)",
+        title: "2. Max of 3 Numbers — findMax3(a, b, c) [12 Tests]",
+        prompt: "Write a function <code>findMax3(a, b, c)</code> that returns the largest of three numbers. If any input is <code>NaN</code>, return <code>-1</code>.",
+        logicNote: "Note: Math helpers like Math.floor/Math.abs are allowed, but Math.max is blocked because I am checking your own logic.",
+        fnName: "findMax3",
+        forbid: [
+          { pattern: "Math\\s*\\.\\s*max", message: "Math.max is not allowed — I am checking your own logic!" }
+        ],
+        starter: "function findMax3(a, b, c) {\n  // Return -1 if any input is NaN\n  // Otherwise return the maximum of a, b, and c\n  \n}"
+      },
+      max4: {
+        id: "max4",
+        group: "Part 1: Conditional Logic (Max Functions)",
+        title: "3. Max of 4 Numbers — findMax4(a, b, c, d) [15 Tests]",
+        prompt: "Write a function <code>findMax4(a, b, c, d)</code> that returns the largest of four numbers. If any input is <code>NaN</code>, return <code>-1</code>.",
+        logicNote: "Note: Built-in shortcuts like Math.max are not allowed because I am checking your own comparison logic.",
+        fnName: "findMax4",
+        forbid: [
+          { pattern: "Math\\s*\\.\\s*max", message: "Math.max is not allowed — I am checking your own logic!" }
+        ],
+        starter: "function findMax4(a, b, c, d) {\n  // Return -1 if any input is NaN\n  // Otherwise return the maximum of a, b, c, and d\n  \n}"
+      },
+      max5: {
+        id: "max5",
+        group: "Part 1: Conditional Logic (Max Functions)",
+        title: "4. Max of 5 Numbers — findMax5(a, b, c, d, e) [18 Tests]",
+        prompt: "Write a function <code>findMax5(a, b, c, d, e)</code> that returns the largest of five numbers. If any input is <code>NaN</code>, return <code>-1</code>.",
+        logicNote: "Note: Built-in shortcuts like Math.max are not allowed because I am checking your own comparison logic.",
+        fnName: "findMax5",
+        forbid: [
+          { pattern: "Math\\s*\\.\\s*max", message: "Math.max is not allowed — I am checking your own logic!" }
+        ],
+        starter: "function findMax5(a, b, c, d, e) {\n  // Return -1 if any input is NaN\n  // Otherwise return the maximum of a, b, c, d, and e\n  \n}"
+      },
+
+      /* === PART B: ESSENTIAL FOR LOOP PATTERNS === */
+      evenDigits: {
+        id: "evenDigits",
+        group: "Part 2: Essential For-Loop Patterns",
+        title: "5. For Loop: Count Even Digits — countEvenDigits(n) [10 Tests]",
+        prompt: "Use a <code>for</code> loop to count how many digits in integer <code>n</code> are even (<code>0, 2, 4, 6, 8</code>). Handle negative numbers (ignore the minus sign). If <code>n</code> is <code>NaN</code>, return <code>-1</code>.",
+        logicNote: "Tip: You can use Math.abs(n) and Math.floor(num / 10) inside a for loop, or loop through String(Math.abs(n)). Your code must include a for loop!",
+        fnName: "countEvenDigits",
+        requireLoop: true,
+        forbid: [],
+        starter: "function countEvenDigits(n) {\n  if (Number.isNaN(n)) return -1;\n  // Use a for loop to inspect each digit of n\n  // Hint: Math.abs(n) removes any negative sign\n  \n}"
+      },
+      oddRange: {
+        id: "oddRange",
+        group: "Part 2: Essential For-Loop Patterns",
+        title: "6. For Loop: Sum Odd Numbers in Range — sumOddRange(start, end) [10 Tests]",
+        prompt: "Use a <code>for</code> loop from <code>start</code> to <code>end</code> (inclusive) to return the sum of all <strong>odd</strong> integers in that range. If <code>start &gt; end</code>, return <code>0</code>. If any input is <code>NaN</code>, return <code>-1</code>.",
+        logicNote: "Note: Watch out for negative odd numbers! In JS, (-3) % 2 is -1, so check Math.abs(i % 2) === 1 or i % 2 !== 0.",
+        fnName: "sumOddRange",
+        requireLoop: true,
+        forbid: [],
+        starter: "function sumOddRange(start, end) {\n  if (Number.isNaN(start) || Number.isNaN(end)) return -1;\n  let sum = 0;\n  // Write a for loop from start to end\n  \n  return sum;\n}"
+      },
+      evenRange: {
+        id: "evenRange",
+        group: "Part 2: Essential For-Loop Patterns",
+        title: "7. For Loop: Count Even Numbers in Range — countEvenRange(start, end) [9 Tests]",
+        prompt: "Use a <code>for</code> loop from <code>start</code> to <code>end</code> (inclusive) to count how many <strong>even</strong> integers exist in that range. Remember <code>0</code> is even! If any input is <code>NaN</code>, return <code>-1</code>.",
+        logicNote: "Note: You must use a for loop rather than a closed-form formula because I am checking your loop logic.",
+        fnName: "countEvenRange",
+        requireLoop: true,
+        forbid: [],
+        starter: "function countEvenRange(start, end) {\n  if (Number.isNaN(start) || Number.isNaN(end)) return -1;\n  let count = 0;\n  // Write a for loop from start to end\n  \n  return count;\n}"
+      },
+      factorial: {
+        id: "factorial",
+        group: "Part 2: Essential For-Loop Patterns",
+        title: "8. For Loop: Factorial Accumulator — factorial(n) [9 Tests]",
+        prompt: "Use a <code>for</code> loop to compute <code>n!</code> (<code>1 * 2 * ... * n</code>). Note that <code>0! = 1</code>. If <code>n &lt; 0</code> or <code>NaN</code>, return <code>-1</code>.",
+        logicNote: "Note: Classic multiplication accumulator pattern using a for loop.",
+        fnName: "factorial",
+        requireLoop: true,
+        forbid: [],
+        starter: "function factorial(n) {\n  if (Number.isNaN(n) || n < 0) return -1;\n  let result = 1;\n  // Multiply result by each integer from 1 to n\n  \n  return result;\n}"
+      },
+      reverseStr: {
+        id: "reverseStr",
+        group: "Part 2: Essential For-Loop Patterns",
+        title: "9. For Loop: Reverse a String — reverseString(str) [8 Tests]",
+        prompt: "Use a <code>for</code> loop to reverse the string <code>str</code> and return the reversed string. Do not use <code>.reverse()</code>.",
+        logicNote: "Note: Built-in .reverse() is not allowed because I am checking your backward for-loop logic.",
+        fnName: "reverseString",
+        requireLoop: true,
+        forbid: [
+          { pattern: "\\.\\s*reverse\\s*\\(", message: ".reverse() is not allowed — write a backward for loop instead!" }
+        ],
+        starter: "function reverseString(str) {\n  let reversed = \"\";\n  // Loop from str.length - 1 down to 0\n  \n  return reversed;\n}"
+      },
+      countVowels: {
+        id: "countVowels",
+        group: "Part 2: Essential For-Loop Patterns",
+        title: "10. For Loop: Count Vowels in Text — countVowels(str) [8 Tests]",
+        prompt: "Use a <code>for</code> loop to count how many vowels (<code>a, e, i, o, u</code>, both uppercase and lowercase) appear in <code>str</code>.",
+        logicNote: "Note: Built-in regex .match() is not allowed — iterate character-by-character with a for loop.",
+        fnName: "countVowels",
+        requireLoop: true,
+        forbid: [
+          { pattern: "\\.\\s*match\\s*\\(", message: ".match() is not allowed — check characters inside a for loop!" }
+        ],
+        starter: "function countVowels(str) {\n  let count = 0;\n  // Loop through each character of str\n  \n  return count;\n}"
+      },
+      isPrime: {
+        id: "isPrime",
+        group: "Part 2: Essential For-Loop Patterns",
+        title: "11. For Loop: Prime Number Checker — isPrime(n) [10 Tests]",
+        prompt: "Use a <code>for</code> loop to return <code>true</code> if integer <code>n</code> is a prime number, or <code>false</code> otherwise. Numbers <code>&le; 1</code> are not prime. If <code>n</code> is <code>NaN</code>, return <code>false</code>.",
+        logicNote: "Tip: Math.sqrt(n) is allowed! Test divisors i starting from 2 up to Math.sqrt(n) (or n - 1).",
+        fnName: "isPrime",
+        requireLoop: true,
+        forbid: [],
+        starter: "function isPrime(n) {\n  if (Number.isNaN(n) || n <= 1) return false;\n  // Use a for loop to check if any number divides n evenly\n  \n  return true;\n}"
+      }
+    };
+
+    const TEST_SUITES = {
+      max2: [
+        { label: "1. Second value larger", args: [10, 25], expected: 25 },
+        { label: "2. First value larger", args: [42, 17], expected: 42 },
+        { label: "3. Equal positive values", args: [9, 9], expected: 9 },
+        { label: "4. Equal negative values", args: [-8, -8], expected: -8 },
+        { label: "5. Negative integers", args: [-15, -4], expected: -4 },
+        { label: "6. Negative vs Zero", args: [-100, 0], expected: 0 },
+        { label: "7. Floating-point precision", args: [3.1415, 3.1419], expected: 3.1419 },
+        { label: "8. Negative Infinity edge case", args: ["__NINF__", -999999], expected: -999999 },
+        { label: "9. NaN in 1st slot returns -1", args: ["__NAN__", 5], expected: -1 },
+        { label: "10. NaN in 2nd slot returns -1", args: [12, "__NAN__"], expected: -1 }
+      ],
+      max3: [
+        { label: "1. Max in 3rd slot (ascending)", args: [2, 8, 15], expected: 15 },
+        { label: "2. Max in 2nd slot (middle)", args: [5, 21, 9], expected: 21 },
+        { label: "3. Max in 1st slot (descending)", args: [30, 14, 7], expected: 30 },
+        { label: "4. All negative numbers", args: [-10, -3, -25], expected: -3 },
+        { label: "5. Tie between 1st & 2nd", args: [14, 14, 6], expected: 14 },
+        { label: "6. Tie between 2nd & 3rd", args: [4, 19, 19], expected: 19 },
+        { label: "7. All zeros", args: [0, 0, 0], expected: 0 },
+        { label: "8. Negative decimals", args: [-1.5, -1.2, -1.9], expected: -1.2 },
+        { label: "9. Negative Infinity & zero", args: ["__NINF__", -50, 0], expected: 0 },
+        { label: "10. NaN in 1st slot returns -1", args: ["__NAN__", 4, 9], expected: -1 },
+        { label: "11. NaN in 2nd slot returns -1", args: [4, "__NAN__", 9], expected: -1 },
+        { label: "12. NaN in 3rd slot returns -1", args: [4, 9, "__NAN__"], expected: -1 }
+      ],
+      max4: [
+        { label: "1. Max in 1st slot", args: [50, 12, 33, 29], expected: 50 },
+        { label: "2. Max in 2nd slot", args: [3, 9, 2, 7], expected: 9 },
+        { label: "3. Max in 3rd slot", args: [11, 24, 88, 45], expected: 88 },
+        { label: "4. Max in 4th slot", args: [-5, 0, 14, 22], expected: 22 },
+        { label: "5. All negative numbers", args: [-99, -42, -100, -41], expected: -41 },
+        { label: "6. Pairwise tie (1st & 4th)", args: [17, 5, 9, 17], expected: 17 },
+        { label: "7. Three-way tie for max", args: [8, 8, 3, 8], expected: 8 },
+        { label: "8. All identical negative numbers", args: [-6, -6, -6, -6], expected: -6 },
+        { label: "9. Tiny decimal differences", args: [0.001, 0.009, 0.0089, 0.002], expected: 0.009 },
+        { label: "10. Negatives with zero max", args: [-12, -0.01, -99, 0], expected: 0 },
+        { label: "11. Negative Infinity included", args: [-500, "__NINF__", -120, -300], expected: -120 },
+        { label: "12. NaN in 1st slot returns -1", args: ["__NAN__", 2, 3, 4], expected: -1 },
+        { label: "13. NaN in 2nd slot returns -1", args: [1, "__NAN__", 3, 4], expected: -1 },
+        { label: "14. NaN in 3rd slot returns -1", args: [1, 2, "__NAN__", 4], expected: -1 },
+        { label: "15. NaN in 4th slot returns -1", args: [1, 2, 3, "__NAN__"], expected: -1 }
+      ],
+      max5: [
+        { label: "1. Max in 1st slot", args: [100, 99, 98, 97, 96], expected: 100 },
+        { label: "2. Max in 2nd slot", args: [12, 64, 31, 45, 29], expected: 64 },
+        { label: "3. Max in 3rd slot", args: [11, 4, 27, 19, 8], expected: 27 },
+        { label: "4. Max in 4th slot", args: [5, 18, 22, 91, 40], expected: 91 },
+        { label: "5. Max in 5th slot", args: [14, 28, 35, 42, 77], expected: 77 },
+        { label: "6. All negative (max in 5th)", args: [-10, -20, -5, -30, -1], expected: -1 },
+        { label: "7. All negative (max in 2nd)", args: [-88, -12, -45, -19, -70], expected: -12 },
+        { label: "8. Mixed floats & zero max", args: [-0.1, 0, -5.5, -0.01, -2], expected: 0 },
+        { label: "9. Two tied at ends (1st & 5th)", args: [33, 10, 25, 19, 33], expected: 33 },
+        { label: "10. Four-way tie for max", args: [7, 7, 2, 7, 7], expected: 7 },
+        { label: "11. All identical negatives", args: [-7, -7, -7, -7, -7], expected: -7 },
+        { label: "12. High-precision decimals", args: [1.0001, 1.0009, 1.0005, 1.0008, 1.0002], expected: 1.0009 },
+        { label: "13. Negative Infinity in middle", args: [-40, -15, "__NINF__", -8, -22], expected: -8 },
+        { label: "14. NaN in 1st slot returns -1", args: ["__NAN__", 4, 8, 12, 16], expected: -1 },
+        { label: "15. NaN in 2nd slot returns -1", args: [4, "__NAN__", 8, 12, 16], expected: -1 },
+        { label: "16. NaN in 3rd slot returns -1", args: [4, 8, "__NAN__", 12, 16], expected: -1 },
+        { label: "17. NaN in 4th slot returns -1", args: [4, 8, 12, "__NAN__", 16], expected: -1 },
+        { label: "18. NaN in 5th slot returns -1", args: [4, 8, 12, 16, "__NAN__"], expected: -1 }
+      ],
+      evenDigits: [
+        { label: "1. Mixed digits (123456)", args: [123456], expected: 3 },
+        { label: "2. All even digits (24680)", args: [24680], expected: 5 },
+        { label: "3. All odd digits (13579)", args: [13579], expected: 0 },
+        { label: "4. Single digit zero (0)", args: [0], expected: 1 },
+        { label: "5. Single odd digit (7)", args: [7], expected: 0 },
+        { label: "6. Single even digit (8)", args: [8], expected: 1 },
+        { label: "7. Negative number (-4821)", args: [-4821], expected: 3 },
+        { label: "8. Number with zeros (102030)", args: [102030], expected: 4 },
+        { label: "9. Large integer (9876543210)", args: [9876543210], expected: 5 },
+        { label: "10. NaN returns -1", args: ["__NAN__"], expected: -1 }
+      ],
+      oddRange: [
+        { label: "1. Odds from 1 to 10 (1+3+5+7+9)", args: [1, 10], expected: 25 },
+        { label: "2. Odds from 2 to 6 (3+5)", args: [2, 6], expected: 8 },
+        { label: "3. Single odd number (5 to 5)", args: [5, 5], expected: 5 },
+        { label: "4. Single even number (4 to 4)", args: [4, 4], expected: 0 },
+        { label: "5. Negative odd range (-5 to -1)", args: [-5, -1], expected: -9 },
+        { label: "6. Crossing zero (-3 to 3)", args: [-3, 3], expected: 0 },
+        { label: "7. Asymmetric range (-3 to 5)", args: [-3, 5], expected: 5 },
+        { label: "8. Empty range when start > end", args: [10, 2], expected: 0 },
+        { label: "9. NaN start returns -1", args: ["__NAN__", 5], expected: -1 },
+        { label: "10. NaN end returns -1", args: [1, "__NAN__"], expected: -1 }
+      ],
+      evenRange: [
+        { label: "1. Evens from 1 to 10 (2,4,6,8,10)", args: [1, 10], expected: 5 },
+        { label: "2. Evens from 0 to 4 (0,2,4)", args: [0, 4], expected: 3 },
+        { label: "3. Single even number (8 to 8)", args: [8, 8], expected: 1 },
+        { label: "4. Single odd number (7 to 7)", args: [7, 7], expected: 0 },
+        { label: "5. Negative even range (-6 to -2)", args: [-6, -2], expected: 3 },
+        { label: "6. Crossing zero (-2 to 2)", args: [-2, 2], expected: 3 },
+        { label: "7. Range with start > end", args: [9, 3], expected: 0 },
+        { label: "8. NaN start returns -1", args: ["__NAN__", 10], expected: -1 },
+        { label: "9. NaN end returns -1", args: [2, "__NAN__"], expected: -1 }
+      ],
+      factorial: [
+        { label: "1. factorial(5) = 120", args: [5], expected: 120 },
+        { label: "2. factorial(1) = 1", args: [1], expected: 1 },
+        { label: "3. factorial(0) = 1", args: [0], expected: 1 },
+        { label: "4. factorial(3) = 6", args: [3], expected: 6 },
+        { label: "5. factorial(7) = 5040", args: [7], expected: 5040 },
+        { label: "6. factorial(10) = 3628800", args: [10], expected: 3628800 },
+        { label: "7. Negative input (-1) returns -1", args: [-1], expected: -1 },
+        { label: "8. Negative input (-5) returns -1", args: [-5], expected: -1 },
+        { label: "9. NaN returns -1", args: ["__NAN__"], expected: -1 }
+      ],
+      reverseStr: [
+        { label: "1. Simple word ('hello')", args: ["hello"], expected: "olleh" },
+        { label: "2. Mixed case ('JavaScript')", args: ["JavaScript"], expected: "tpircSavaJ" },
+        { label: "3. Digits string ('12345')", args: ["12345"], expected: "54321" },
+        { label: "4. Palindrome ('racecar')", args: ["racecar"], expected: "racecar" },
+        { label: "5. Single character ('A')", args: ["A"], expected: "A" },
+        { label: "6. Empty string ('')", args: [""], expected: "" },
+        { label: "7. Phrase with spaces ('hi mom')", args: ["hi mom"], expected: "mom ih" },
+        { label: "8. Punctuation ('code!')", args: ["code!"], expected: "!edoc" }
+      ],
+      countVowels: [
+        { label: "1. Lowercase word ('education')", args: ["education"], expected: 5 },
+        { label: "2. Uppercase vowels ('AEIOU')", args: ["AEIOU"], expected: 5 },
+        { label: "3. Mixed case ('Computer Science')", args: ["Computer Science"], expected: 6 },
+        { label: "4. No vowels ('rhythm')", args: ["rhythm"], expected: 0 },
+        { label: "5. Empty string ('')", args: [""], expected: 0 },
+        { label: "6. Numbers & symbols ('123!@#')", args: ["123!@#"], expected: 0 },
+        { label: "7. Repeated vowels ('banana')", args: ["banana"], expected: 3 },
+        { label: "8. All consonants ('bcdfg')", args: ["bcdfg"], expected: 0 }
+      ],
+      isPrime: [
+        { label: "1. Smallest prime (2)", args: [2], expected: true },
+        { label: "2. Prime number (3)", args: [3], expected: true },
+        { label: "3. Composite even (4)", args: [4], expected: false },
+        { label: "4. Composite odd (9)", args: [9], expected: false },
+        { label: "5. Prime (17)", args: [17], expected: true },
+        { label: "6. Composite square (25)", args: [25], expected: false },
+        { label: "7. Larger prime (97)", args: [97], expected: true },
+        { label: "8. One is not prime (1)", args: [1], expected: false },
+        { label: "9. Zero & negatives (-7)", args: [-7], expected: false },
+        { label: "10. NaN returns false", args: ["__NAN__"], expected: false }
+      ]
+    };
+
+    const selectEl = document.getElementById("challengeSelect");
+    const promptEl = document.getElementById("problemPrompt");
+    const logicBannerEl = document.getElementById("logicBanner");
+    const editorEl = document.getElementById("codeEditor");
+    const highlightLayer = document.getElementById("highlightLayer");
+    const resultsEl = document.getElementById("resultsList");
+    const scoreEl = document.getElementById("scorePill");
+    const sandboxFrame = document.getElementById("sandboxFrame");
+    const themeToggleBtn = document.getElementById("themeToggleBtn");
+
+    const studentDrafts = {};
+
+    /* Live JavaScript Syntax Highlighter */
+    function escapeHTML(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function highlightJS(code) {
+      const escaped = escapeHTML(code);
+      const tokenRegex = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`)|\b(function|return|if|else|for|while|do|switch|case|break|continue|let|const|var|typeof|true|false|null|undefined)\b|\b(Number|isNaN|NaN|Infinity|Math|String|Array|console)\b|\b(\d+(?:\.\d+)?)\b|([=<>!&|+-]{1,3})/g;
+
+      const highlighted = escaped.replace(tokenRegex, function (match, comment, str, kw, builtin, num, op) {
+        if (comment) return '<span class="tok-com">' + comment + '</span>';
+        if (str) return '<span class="tok-str">' + str + '</span>';
+        if (kw) return '<span class="tok-kw">' + kw + '</span>';
+        if (builtin) return '<span class="tok-bi">' + builtin + '</span>';
+        if (num) return '<span class="tok-num">' + num + '</span>';
+        if (op) return '<span class="tok-op">' + op + '</span>';
+        return match;
+      });
+
+      return highlighted + (code.endsWith("\n") ? " " : "");
+    }
+
+    function syncHighlight() {
+      highlightLayer.innerHTML = highlightJS(editorEl.value);
+      highlightLayer.scrollTop = editorEl.scrollTop;
+      highlightLayer.scrollLeft = editorEl.scrollLeft;
+    }
+
+    editorEl.addEventListener("scroll", () => {
+      highlightLayer.scrollTop = editorEl.scrollTop;
+      highlightLayer.scrollLeft = editorEl.scrollLeft;
+    });
+
+    themeToggleBtn.addEventListener("click", () => {
+      const isDark = document.body.classList.toggle("dark-theme");
+      themeToggleBtn.textContent = isDark ? "☀ Switch to White Mode" : "🌙 Switch to Dark Mode";
+    });
+
+    function formatDisplayVal(v) {
+      if (v === "__NAN__" || Number.isNaN(v)) return "NaN";
+      if (v === "__INF__" || v === Infinity) return "Infinity";
+      if (v === "__NINF__" || v === -Infinity) return "-Infinity";
+      if (v === undefined) return "undefined";
+      if (typeof v === "string") return JSON.stringify(v);
+      return String(v);
+    }
+
+    /* Populate grouped dropdown */
+    const groups = {};
+    Object.values(CHALLENGES).forEach((ch) => {
+      if (!groups[ch.group]) {
+        const optgroup = document.createElement("optgroup");
+        optgroup.label = ch.group;
+        selectEl.appendChild(optgroup);
+        groups[ch.group] = optgroup;
+      }
+      const opt = document.createElement("option");
+      opt.value = ch.id;
+      opt.textContent = ch.title;
+      groups[ch.group].appendChild(opt);
+    });
+
+    function loadChallenge(id) {
+      const ch = CHALLENGES[id];
+      const tests = TEST_SUITES[id] || [];
+      promptEl.innerHTML = ch.prompt;
+      logicBannerEl.textContent = ch.logicNote;
+      editorEl.value = studentDrafts[id] !== undefined ? studentDrafts[id] : ch.starter;
+      syncHighlight();
+
+      scoreEl.textContent = "0 / " + tests.length + " Ready";
+      scoreEl.style.color = "var(--text)";
+
+      resultsEl.innerHTML = tests.map((tc) => {
+        const formattedArgs = tc.args.map(formatDisplayVal).join(", ");
+        const formattedExp = formatDisplayVal(tc.expected);
+        return `
+          <div class="test-card pending">
+            <div>
+              <div class="test-title">${tc.label}</div>
+              <div class="test-call">${ch.fnName}(${formattedArgs})</div>
+              <div class="test-io">Expected: <span class="val-expected">${formattedExp}</span></div>
+            </div>
+            <span class="status-tag">NOT RUN</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    selectEl.addEventListener("change", (e) => loadChallenge(e.target.value));
+
+    editorEl.addEventListener("input", (e) => {
+      studentDrafts[selectEl.value] = e.target.value;
+      syncHighlight();
+    });
+
+    editorEl.addEventListener("keydown", (e) => {
+      if (e.key === "Tab") {
+        e.preventDefault();
+        const start = editorEl.selectionStart;
+        const end = editorEl.selectionEnd;
+        editorEl.value = editorEl.value.substring(0, start) + "  " + editorEl.value.substring(end);
+        editorEl.selectionStart = editorEl.selectionEnd = start + 2;
+        studentDrafts[selectEl.value] = editorEl.value;
+        syncHighlight();
+      }
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      const id = selectEl.value;
+      studentDrafts[id] = CHALLENGES[id].starter;
+      loadChallenge(id);
+    });
+
+    function stripComments(code) {
+      return code.replace(/\/\/[^\n]*|\/\*[\s\S]*?\*\//g, "");
+    }
+
+    document.getElementById("runBtn").addEventListener("click", () => {
+      const id = selectEl.value;
+      const ch = CHALLENGES[id];
+      const tests = TEST_SUITES[id] || [];
+      const studentCode = editorEl.value;
+      const activeCode = stripComments(studentCode);
+
+      /* Check forbidden shortcuts (ignoring comments) */
+      for (const rule of ch.forbid || []) {
+        const regex = new RegExp(rule.pattern);
+        if (regex.test(activeCode)) {
+          renderReport(0, tests.length, [{
+            label: "Logic Check Notice",
+            callStr: ch.fnName + "(...)",
+            expectedStr: "Custom logic without shortcuts",
+            actualStr: rule.message,
+            passed: false
+          }]);
+          return;
+        }
+      }
+
+      /* Enforce using a for loop when required by the lesson */
+      if (ch.requireLoop && !/\bfor\s*\(/.test(activeCode)) {
+        renderReport(0, tests.length, [{
+          label: "Loop Requirement",
+          callStr: "for (...; ...; ...)",
+          expectedStr: "A working for loop",
+          actualStr: "No for loop found — write a for loop so I can check your loop logic!",
+          passed: false
+        }]);
+        return;
+      }
+
+      scoreEl.textContent = "Running...";
+
+      const runnerHTML = [
+        "<!DOCTYPE html><html><body><script>",
+        "function hydrate(val) {",
+        "  if (val === '__NAN__') return NaN;",
+        "  if (val === '__INF__') return Infinity;",
+        "  if (val === '__NINF__') return -Infinity;",
+        "  return val;",
+        "}",
+        "function stringifyVal(val) {",
+        "  if (Number.isNaN(val)) return 'NaN';",
+        "  if (val === Infinity) return 'Infinity';",
+        "  if (val === -Infinity) return '-Infinity';",
+        "  if (val === undefined) return 'undefined';",
+        "  if (typeof val === 'string') return JSON.stringify(val);",
+        "  return String(val);",
+        "}",
+        "window.addEventListener('message', function(event) {",
+        "  var code = event.data.code;",
+        "  var fnName = event.data.fnName;",
+        "  var tests = event.data.tests;",
+        "  var report = [];",
+        "  var passedCount = 0;",
+        "  try {",
+        "    var userFn = new Function(code + '; return typeof ' + fnName + ' === \"function\" ? ' + fnName + ' : null;')();",
+        "    if (!userFn) {",
+        "      throw new Error('Function \"' + fnName + '\" was not found. Keep the exact function name.');",
+        "    }",
+        "    tests.forEach(function(tc) {",
+        "      var args = tc.args.map(hydrate);",
+        "      var expected = hydrate(tc.expected);",
+        "      var callStr = fnName + '(' + args.map(stringifyVal).join(', ') + ')';",
+        "      var actualStr = '';",
+        "      var passed = false;",
+        "      try {",
+        "        var actual = userFn.apply(null, args);",
+        "        actualStr = stringifyVal(actual);",
+        "        if (Number.isNaN(expected)) {",
+        "          passed = Number.isNaN(actual);",
+        "        } else {",
+        "          passed = Object.is(actual, expected) || actual === expected;",
+        "        }",
+        "      } catch (err) {",
+        "        actualStr = 'Error: ' + err.message;",
+        "      }",
+        "      if (passed) passedCount++;",
+        "      report.push({",
+        "        label: tc.label,",
+        "        callStr: callStr,",
+        "        expectedStr: stringifyVal(expected),",
+        "        actualStr: actualStr,",
+        "        passed: passed",
+        "      });",
+        "    });",
+        "    parent.postMessage({ type: 'GRADE_RESULT', passedCount: passedCount, totalCount: tests.length, report: report }, '*');",
+        "  } catch (syntaxErr) {",
+        "    parent.postMessage({",
+        "      type: 'GRADE_RESULT',",
+        "      passedCount: 0,",
+        "      totalCount: tests.length,",
+        "      report: [{",
+        "        label: 'Syntax / Definition Error',",
+        "        callStr: fnName + '(...)',",
+        "        expectedStr: 'Valid JavaScript function',",
+        "        actualStr: syntaxErr.message,",
+        "        passed: false",
+        "      }]",
+        "    }, '*');",
+        "  }",
+        "});",
+        "<\/script></body></html>"
+      ].join("\n");
+
+      sandboxFrame.onload = () => {
+        sandboxFrame.contentWindow.postMessage({
+          code: studentCode,
+          fnName: ch.fnName,
+          tests: tests
+        }, "*");
+      };
+      sandboxFrame.srcdoc = runnerHTML;
+    });
+
+    window.addEventListener("message", (event) => {
+      if (event.data && event.data.type === "GRADE_RESULT") {
+        renderReport(event.data.passedCount, event.data.totalCount, event.data.report);
+      }
+    });
+
+    function renderReport(passedCount, totalCount, report) {
+      const allPassed = passedCount === totalCount && totalCount > 0;
+      scoreEl.textContent = passedCount + " / " + totalCount + " Passed";
+      scoreEl.style.color = allPassed ? "var(--pass-text)" : "var(--fail-text)";
+
+      resultsEl.innerHTML = report.map((item) => `
+        <div class="test-card ${item.passed ? "pass" : "fail"}">
+          <div>
+            <div class="test-title">${item.label}</div>
+            <div class="test-call">${item.callStr}</div>
+            <div class="test-io">
+              Expected: <span class="val-expected">${item.expectedStr}</span> &nbsp;|&nbsp;
+              Your Output: <span class="${item.passed ? "val-actual-pass" : "val-actual-fail"}">${item.actualStr}</span>
+            </div>
+          </div>
+          <span class="status-tag">${item.passed ? "PASS" : "FAIL"}</span>
+        </div>
+      `).join("");
+    }
+
+    loadChallenge("max2");
+  </script>
+</body>
+</html>
